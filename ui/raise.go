@@ -67,7 +67,7 @@ func WaitForRaiseUIThenQuit() {
 		return 0
 	}, 0, 0, win.WINEVENT_SKIPOWNPROCESS|win.WINEVENT_OUTOFCONTEXT)
 	if err != nil {
-                showErrorCustom(nil, l18n.Sprintf("AmneziaWG Detection Error"), l18n.Sprintf("Unable to wait for AmneziaWG window to appear: %v", err))
+                showErrorCustom(nil, l18n.Sprintf("MyAmneziaWG3 Detection Error"), l18n.Sprintf("Unable to wait for MyAmneziaWG3 window to appear: %v", err))
 	}
 	for {
 		var msg win.MSG
