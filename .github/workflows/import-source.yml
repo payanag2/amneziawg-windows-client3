@@ -28,9 +28,7 @@ jobs:
       - name: Copy source tree
         shell: bash
         run: |
-          rsync -a --delete --exclude='.git' --exclude='.github/workflows/import-source.yml' source/ destination/
-          mkdir -p destination/.github/workflows
-          cp destination/.github/workflows/import-source.yml destination/.github/workflows/import-source.yml 2>/dev/null || true
+          rsync -a --delete --exclude='.git' --exclude='.github/workflows/***' source/ destination/
 
       - name: Commit imported source
         shell: bash
