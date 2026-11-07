@@ -113,7 +113,7 @@ func checkForWow64() {
 		fatalf("Unable to determine whether the process is running under WOW64: %v", err)
 	}
 	if b {
-		fatalf("You must use the native version of AmneziaWG on this computer.")
+		fatalf("You must use the native version of MyAmneziaWG3 on this computer.")
 	}
 }
 
@@ -125,14 +125,14 @@ func checkForAdminGroup() {
 	}
 	defer processToken.Close()
 	if !elevate.TokenIsElevatedOrElevatable(processToken) {
-		fatalf("AmneziaWG may only be used by users who are a member of the Builtin %s group.", elevate.AdminGroupName())
+		fatalf("MyAmneziaWG3 may only be used by users who are a member of the Builtin %s group.", elevate.AdminGroupName())
 	}
 }
 
 func checkForAdminDesktop() {
 	adminDesktop, err := elevate.IsAdminDesktop()
 	if !adminDesktop && err == nil {
-		fatalf("AmneziaWG is running, but the UI is only accessible from desktops of the Builtin %s group.", elevate.AdminGroupName())
+		fatalf("MyAmneziaWG3 is running, but the UI is only accessible from desktops of the Builtin %s group.", elevate.AdminGroupName())
 	}
 }
 
