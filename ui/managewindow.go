@@ -13,8 +13,8 @@ import (
 	"github.com/lxn/win"
 	"golang.org/x/sys/windows"
 
-	"github.com/amnezia-vpn/amneziawg-windows-client/l18n"
-	"github.com/amnezia-vpn/amneziawg-windows-client/manager"
+	"github.com/payanag2/amneziawg-windows-client3/l18n"
+	"github.com/payanag2/amneziawg-windows-client3/manager"
 )
 
 type ManageTunnelsWindow struct {
@@ -29,7 +29,7 @@ type ManageTunnelsWindow struct {
 }
 
 const (
-	manageWindowWindowClass = "MyAmneziaWG UI - Manage Tunnels"
+	manageWindowWindowClass = "MyAmneziaWG3 UI - Manage Tunnels"
 	raiseMsg                = win.WM_USER + 0x3510
 	aboutWireGuardCmd       = 0x37
 )
@@ -56,7 +56,7 @@ func NewManageTunnelsWindow() (*ManageTunnelsWindow, error) {
 	}
 
 	mtw := new(ManageTunnelsWindow)
-	mtw.SetName("MyAmneziaWG")
+	mtw.SetName("MyAmneziaWG3")
 
 	err = walk.InitWindow(mtw, nil, manageWindowWindowClass, win.WS_OVERLAPPEDWINDOW, win.WS_EX_CONTROLPARENT)
 	if err != nil {
@@ -69,7 +69,7 @@ func NewManageTunnelsWindow() (*ManageTunnelsWindow, error) {
 	if icon, err := loadLogoIcon(32); err == nil {
 		mtw.SetIcon(icon)
 	}
-	mtw.SetTitle("MyAmneziaWG")
+	mtw.SetTitle("MyAmneziaWG3")
 	mtw.SetFont(font)
 	mtw.SetSize(walk.Size{675, 525})
 	mtw.SetMinMaxSize(walk.Size{500, 400}, walk.Size{0, 0})

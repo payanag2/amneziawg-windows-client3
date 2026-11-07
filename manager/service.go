@@ -19,9 +19,9 @@ import (
 	"golang.org/x/sys/windows"
 	"golang.org/x/sys/windows/svc"
 
-	"github.com/amnezia-vpn/amneziawg-windows-client/elevate"
-	"github.com/amnezia-vpn/amneziawg-windows-client/ringlogger"
-	"github.com/amnezia-vpn/amneziawg-windows-client/services"
+	"github.com/payanag2/amneziawg-windows-client3/elevate"
+	"github.com/payanag2/amneziawg-windows-client3/ringlogger"
+	"github.com/payanag2/amneziawg-windows-client3/services"
 	"github.com/amnezia-vpn/amneziawg-windows/v3/conf"
 )
 

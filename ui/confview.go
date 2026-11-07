@@ -13,8 +13,8 @@ import (
 	"github.com/lxn/walk"
 	"github.com/lxn/win"
 
-	"github.com/amnezia-vpn/amneziawg-windows-client/l18n"
-	"github.com/amnezia-vpn/amneziawg-windows-client/manager"
+	"github.com/payanag2/amneziawg-windows-client3/l18n"
+	"github.com/payanag2/amneziawg-windows-client3/manager"
 	"github.com/amnezia-vpn/amneziawg-windows/v3/conf"
 )
 

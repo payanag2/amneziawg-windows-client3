@@ -19,7 +19,7 @@ import (
 	"golang.org/x/sys/windows"
 	"golang.org/x/sys/windows/svc"
 
-	"github.com/amnezia-vpn/amneziawg-windows-client/updater"
+	"github.com/payanag2/amneziawg-windows-client3/updater"
 	"github.com/amnezia-vpn/amneziawg-windows/v3/conf"
 )
 

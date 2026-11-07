@@ -281,7 +281,7 @@
                 {
                     "id": "Bytes",
                     "string": "%[1]d",
-                    "type": "github.com/amnezia-vpn/amneziawg-windows-client/conf.Bytes",
+                    "type": "github.com/payanag2/amneziawg-windows-client3/conf.Bytes",
                     "underlyingType": "uint64",
                     "argNum": 1,
                     "expr": "b"

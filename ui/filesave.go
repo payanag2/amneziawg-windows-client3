@@ -10,7 +10,7 @@ import (
 
 	"github.com/lxn/walk"
 
-	"github.com/amnezia-vpn/amneziawg-windows-client/l18n"
+	"github.com/payanag2/amneziawg-windows-client3/l18n"
 )
 
 func writeFileWithOverwriteHandling(owner walk.Form, filePath string, write func(file *os.File) error) bool {

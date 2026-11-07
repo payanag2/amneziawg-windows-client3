@@ -1,4 +1,4 @@
-module github.com/amnezia-vpn/amneziawg-windows-client
+module github.com/payanag2/amneziawg-windows-client3
 
 go 1.25.0
 

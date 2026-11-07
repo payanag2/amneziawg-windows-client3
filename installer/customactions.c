@@ -14,8 +14,8 @@
 #include <stdbool.h>
 #include <tchar.h>
 
-#define MANAGER_SERVICE_NAME TEXT("MyAmneziaWGManager")
-#define TUNNEL_SERVICE_PREFIX TEXT("MyAmneziaWGTunnel$")
+#define MANAGER_SERVICE_NAME TEXT("MyAmneziaWG3Manager")
+#define TUNNEL_SERVICE_PREFIX TEXT("MyAmneziaWG3Tunnel$")
 
 enum log_level { LOG_LEVEL_INFO, LOG_LEVEL_WARN, LOG_LEVEL_ERR, LOG_LEVEL_MSIERR };
 
@@ -38,15 +38,15 @@ static void log_messagef(MSIHANDLE installer, enum log_level level, const TCHAR 
 
 	switch (level) {
 	case LOG_LEVEL_INFO:
-		template = TEXT("MyAmneziaWG: [1]");
+		template = TEXT("MyAmneziaWG3: [1]");
 		type = INSTALLMESSAGE_INFO;
 		break;
 	case LOG_LEVEL_WARN:
-		template = TEXT("MyAmneziaWG warning: [1]");
+		template = TEXT("MyAmneziaWG3 warning: [1]");
 		type = INSTALLMESSAGE_INFO;
 		break;
 	case LOG_LEVEL_ERR:
-		template = TEXT("MyAmneziaWG error: [1]");
+		template = TEXT("MyAmneziaWG3 error: [1]");
 		type = INSTALLMESSAGE_ERROR;
 		break;
 	case LOG_LEVEL_MSIERR:
@@ -478,7 +478,7 @@ __declspec(dllexport) UINT __stdcall RemoveConfigFolder(MSIHANDLE installer)
 	if (!path[0] || !PathAppend(path, TEXT("Data")))
 		goto out;
 	remove_directory_recursive(installer, path, 10);
-	RegDeleteKey(HKEY_LOCAL_MACHINE, TEXT("Software\\MyAmneziaWG"));
+	RegDeleteKey(HKEY_LOCAL_MACHINE, TEXT("Software\\MyAmneziaWG3"));
 out:
 	if (is_com_initialized)
 		CoUninitialize();

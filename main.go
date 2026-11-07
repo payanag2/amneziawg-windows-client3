@@ -22,12 +22,12 @@ import (
 	"github.com/amnezia-vpn/amneziawg-windows/v3/conf"
 	"github.com/amnezia-vpn/amneziawg-windows/v3/tunnel"
 
-	"github.com/amnezia-vpn/amneziawg-windows-client/elevate"
-	"github.com/amnezia-vpn/amneziawg-windows-client/l18n"
-	"github.com/amnezia-vpn/amneziawg-windows-client/manager"
-	"github.com/amnezia-vpn/amneziawg-windows-client/ringlogger"
-	"github.com/amnezia-vpn/amneziawg-windows-client/ui"
-	"github.com/amnezia-vpn/amneziawg-windows-client/updater"
+	"github.com/payanag2/amneziawg-windows-client3/elevate"
+	"github.com/payanag2/amneziawg-windows-client3/l18n"
+	"github.com/payanag2/amneziawg-windows-client3/manager"
+	"github.com/payanag2/amneziawg-windows-client3/ringlogger"
+	"github.com/payanag2/amneziawg-windows-client3/ui"
+	"github.com/payanag2/amneziawg-windows-client3/updater"
 )
 
 func setLogFile() {
@@ -192,7 +192,7 @@ func main() {
 		}
 		checkForAdminDesktop()
 		time.Sleep(30 * time.Second)
-		fatalf("MyAmneziaWG system tray icon did not appear after 30 seconds.")
+		fatalf("MyAmneziaWG3 system tray icon did not appear after 30 seconds.")
 		return
 	case "/uninstallmanagerservice":
 		if len(os.Args) != 2 {

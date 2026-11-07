@@ -15,13 +15,13 @@ import (
 )
 
 const (
-    ProductName = "MyAmneziaWG"
+    ProductName = "MyAmneziaWG3"
 
-    ManagerServiceName  = "MyAmneziaWGManager"
-    TunnelServicePrefix = "MyAmneziaWGTunnel$"
+    ManagerServiceName  = "MyAmneziaWG3Manager"
+    TunnelServicePrefix = "MyAmneziaWG3Tunnel$"
 
-    tunnelNamePrefix = "M-"
-    adminRegKey      = `Software\MyAmneziaWG`
+    tunnelNamePrefix = "M3-"
+    adminRegKey      = `Software\MyAmneziaWG3`
 )
 
 func internalTunnelName(name string) string {
