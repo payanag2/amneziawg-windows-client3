@@ -1,0 +1,39 @@
+name: Build MyAmneziaWG3
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build application binaries
+        shell: cmd
+        run: build7.bat
+
+      - name: Build MSI installers
+        shell: cmd
+        run: installer\\build7.bat
+
+      - name: Verify installer output
+        shell: pwsh
+        run: |
+          $files = Get-ChildItem installer/dist -Filter '*.msi' -File
+          if ($files.Count -eq 0) { throw 'No MSI installer files were produced.' }
+          $files | ForEach-Object { Write-Host "$($_.Name) - $($_.Length) bytes" }
+
+      - name: Upload MSI installers
+        uses: actions/upload-artifact@v4
+        with:
+          name: MyAmneziaWG3-installers
+          path: installer/dist/*.msi
+          if-no-files-found: error
+          retention-days: 30
