@@ -1,0 +1,71 @@
+name: Apply MyAmneziaWG3 identity
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  rename:
+    if: github.event.head_commit.message == 'Apply MyAmneziaWG3 identity'
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Rename product and module identity
+        shell: pwsh
+        run: |
+          $extensions = @('.go','.mod','.sum','.bat','.wxs','.c','.md','.yml','.xml','.rc','.h','.json','.txt')
+          $files = Get-ChildItem -Recurse -File | Where-Object {
+            $extensions -contains $_.Extension.ToLowerInvariant() -and
+            $_.FullName -notmatch '[\\/]\.git[\\/]'
+          }
+          foreach ($file in $files) {
+            $text = [System.IO.File]::ReadAllText($file.FullName)
+            $text = $text.Replace('MyAmneziaWG', 'MyAmneziaWG3')
+            $text = $text.Replace('myamneziawg', 'myamneziawg3')
+            $text = $text.Replace('github.com/amnezia-vpn/amneziawg-windows-client', 'github.com/payanag2/amneziawg-windows-client3')
+            $text = $text.Replace('https://github.com/payanag2/amneziawg-windows-client', 'https://github.com/payanag2/amneziawg-windows-client3')
+            [System.IO.File]::WriteAllText($file.FullName, $text, [System.Text.UTF8Encoding]::new($false))
+          }
+
+          $identity = 'manager/identity.go'
+          $text = [System.IO.File]::ReadAllText($identity)
+          $text = $text.Replace('tunnelNamePrefix = "M-"', 'tunnelNamePrefix = "M3-"')
+          [System.IO.File]::WriteAllText($identity, $text, [System.Text.UTF8Encoding]::new($false))
+
+          $wxs = 'installer/wireguard.wxs'
+          $text = [System.IO.File]::ReadAllText($wxs)
+          $guidMap = @{
+            'e2cb9b28-3015-413c-a297-d0364c7289c2' = 'a130b64a-9c2b-4a3a-8b76-31d1c8a43e01'
+            'fe3e4ef3-4f36-4273-89ed-b7d43e80526b' = 'b240c75b-ad3c-4b4b-9c87-42e2d9b54f12'
+            'e548e649-d6ba-4f83-8fcd-551bc75bb50a' = 'c350d86c-be4d-4c5c-ad98-53f3eac65023'
+            'ddc82875-da13-4087-97e0-eb52d4b06680' = 'd460e97d-cf5e-4d6d-bea9-6404fbd76134'
+            'f2b21d49-a131-4a68-9585-3285c44c0000' = 'e571fa8e-d06f-4e7e-8fba-75150ce87245'
+            '34d4bbc4-5980-40df-9d64-317d338ca98b' = 'f6820b9f-e170-4f8f-90cb-86261df98356'
+            'a6b4cb13-8946-408f-aa03-2cfabae368a4' = '07931ca0-f281-4090-a1dc-97372e0a9467'
+            '8c8e1f6f-2a9e-4b5f-8f13-2f2a7f1b6a41' = '18a42db1-0392-41a1-b2ed-a8473f1ba578'
+          }
+          foreach ($old in $guidMap.Keys) { $text = $text.Replace($old, $guidMap[$old]) }
+          $text = [regex]::Replace($text, '(?s)\s*<CustomAction Id="RemoveAdapters".*?</InstallExecuteSequence>', '')
+          [System.IO.File]::WriteAllText($wxs, $text, [System.Text.UTF8Encoding]::new($false))
+
+          $go = Get-ChildItem -Recurse -File -Filter '*.go'
+          foreach ($file in $go) {
+            $text = [System.IO.File]::ReadAllText($file.FullName)
+            $text = $text.Replace('github.com/amnezia-vpn/amneziawg-windows-client/', 'github.com/payanag2/amneziawg-windows-client3/')
+            [System.IO.File]::WriteAllText($file.FullName, $text, [System.Text.UTF8Encoding]::new($false))
+          }
+
+      - name: Commit MyAmneziaWG3 identity
+        shell: pwsh
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "Apply MyAmneziaWG3 identity"
+          git push
