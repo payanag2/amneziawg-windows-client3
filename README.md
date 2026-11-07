@@ -1,47 +1,33 @@
-# [AmneziaWG](https://amnezia.org/) for Windows
+# MyAmneziaWG3 for Windows
 
-This is a fully-featured AmneziaWG client for Windows that uses [Wintun](https://www.wintun.net/). It is the only official and recommended way of using AmneziaWG on Windows.
+MyAmneziaWG3 is an independent Windows desktop client based on the tested MyAmneziaWG fork. It is designed to install alongside the official AmneziaWG client and the separate MyAmneziaWG client.
 
-## Download &amp; Install
+## Separate application identity
 
-If you've come here looking to simply run WireGuard for Windows, [the main download page has links](https://www.wireguard.com/install/). There you will find two things:
+MyAmneziaWG3 uses its own:
+- Product name, installer UpgradeCodes, and MSI component GUIDs
+- Installation and configuration directory: `Program Files\MyAmneziaWG3\Data`
+- Windows manager and tunnel service names
+- Registry namespace: `Software\MyAmneziaWG3`
+- UI window class and application branding
 
-- [The WireGuard Installer](https://download.wireguard.com/windows-client/wireguard-installer.exe) &ndash; This selects the most recent version for your architecture, downloads it, checks signatures and hashes, and installs it.
-- [Standalone MSIs](https://download.wireguard.com/windows-client/) &ndash; These are for system admins who wish to deploy the MSIs directly. For most end users, the ordinary installer takes care of downloading these automatically.
+The installer does not remove the shared Wintun driver during uninstall, avoiding disruption to other VPN clients that may use it.
+
+## Build
+
+The GitHub Actions workflow **Build MyAmneziaWG3** builds the Windows binaries and MSI installers for x86, amd64, and arm64. The generated installers are available as workflow artifacts.
+
+To publish a GitHub Release, open **Actions → Release MyAmneziaWG3 → Run workflow** and enter a tag such as `v1.0.0`. If the tag does not exist, the workflow creates it from the current `main` branch, builds the installers, and attaches them to the release.
 
 ## Documentation
 
-In addition to this [`README.md`](README.md), the following documents are also available:
-
-- [`adminregistry.md`](docs/adminregistry.md) &ndash; A list of registry keys settable by the system administrator for changing the behavior of the application.
-- [`attacksurface.md`](docs/attacksurface.md) &ndash; A discussion of the various components from a security perspective, so that future auditors of this code have a head start in assessing its security design.
-- [`buildrun.md`](docs/buildrun.md) &ndash; Instructions on building, localizing, running, and developing for this repository.
-- [`enterprise.md`](docs/enterprise.md) &ndash; A summary of various features and tips for making the application usable in enterprise settings.
-- [`netquirk.md`](docs/netquirk.md) &ndash; A description of various networking quirks and "kill-switch" semantics.
-- [`userregistry.md`](docs/userregistry.md) &ndash; A list of registry keys settable by the user for changing the behavior of the application.
+- [Build and development notes](docs/buildrun.md)
+- [Admin registry settings](docs/adminregistry.md)
+- [User registry settings](docs/userregistry.md)
+- [Security design](docs/attacksurface.md)
+- [Enterprise notes](docs/enterprise.md)
+- [Network behavior](docs/netquirk.md)
 
 ## License
 
-This repository is MIT-licensed.
-
-```text
-Copyright (C) 2018-2022 WireGuard LLC. All Rights Reserved.
-
-Permission is hereby granted, free of charge, to any person obtaining a
-copy of this software and associated documentation files (the "Software"),
-to deal in the Software without restriction, including without limitation
-the rights to use, copy, modify, merge, publish, distribute, sublicense,
-and/or sell copies of the Software, and to permit persons to whom the
-Software is furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in
-all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
-DEALINGS IN THE SOFTWARE.
-```
+This repository retains the upstream MIT licensing terms. See [COPYING](COPYING).
