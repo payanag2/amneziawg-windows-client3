@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+	SPDX-License-Identifier: GPL-2.0
+
+	Copyright (C) 2019-2022 WireGuard LLC. All Rights Reserved.
+-->
+
+<?if $(var.WIREGUARD_PLATFORM) = "amd64" Or $(var.WIREGUARD_PLATFORM) = "arm64"?>
+	<?define PlatformProgramFilesFolder = "ProgramFiles64Folder"?>
+<?else?>
+	<?define PlatformProgramFilesFolder = "ProgramFilesFolder"?>
+<?endif?>
+<?if $(var.WIREGUARD_PLATFORM) = "amd64"?>
+	<?define UpgradeCode = "e2cb9b28-3015-413c-a297-d0364c7289c2"?>
+<?elseif $(var.WIREGUARD_PLATFORM) = "x86"?>
+	<?define UpgradeCode = "fe3e4ef3-4f36-4273-89ed-b7d43e80526b"?>
+<?elseif $(var.WIREGUARD_PLATFORM) = "arm"?>
+	<?define UpgradeCode = "e548e649-d6ba-4f83-8fcd-551bc75bb50a"?>
+<?elseif $(var.WIREGUARD_PLATFORM) = "arm64"?>
+	<?define UpgradeCode = "ddc82875-da13-4087-97e0-eb52d4b06680"?>
+<?else?>
+	<?error Unknown platform ?>
+<?endif?>
+
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+	<Product
+		Id="*"
+		Name="MyAmneziaWG"
+		Language="1033"
+		Version="$(var.WIREGUARD_VERSION)"
+		Manufacturer="MyAmneziaWG"
+		UpgradeCode="$(var.UpgradeCode)">
+		<Package
+			InstallerVersion="500"
+			Compressed="yes"
+			InstallScope="perMachine"
+			Description="MyAmneziaWG: Fast, Modern, Secure VPN Tunnel"
+			ReadOnly="yes" />
+
+		<MediaTemplate EmbedCab="yes" CompressionLevel="high" />
+
+		<Icon Id="wireguard.ico" SourceFile="..\ui\icon\wireguard.ico" />
+		<Binary Id="customactions.dll" SourceFile="$(var.WIREGUARD_PLATFORM)\customactions.dll" />
+
+		<Property Id="ARPPRODUCTICON" Value="wireguard.ico" />
+		<Property Id="ARPURLINFOABOUT" Value="https://github.com/payanag2/amneziawg-windows-client" />
+		<Property Id="ARPNOMODIFY" Value="yes" />
+		<Property Id="DISABLEADVTSHORTCUTS" Value="yes" />
+		<Property Id="DISABLEROLLBACK" Value="yes" />
+		<Property Id="MSIDISABLERMRESTART" Value="1" />
+		<Property Id="MSIRMSHUTDOWN" Value="1" />
+
+		<MajorUpgrade
+			AllowDowngrades="no"
+			AllowSameVersionUpgrades="yes"
+			DowngradeErrorMessage="A newer version of [ProductName] is already installed."
+			Schedule="afterInstallExecute"
+			IgnoreRemoveFailure="yes" />
+
+		<Directory Id="TARGETDIR" Name="SourceDir">
+			<Directory Id="$(var.PlatformProgramFilesFolder)">
+				<Directory Id="WireGuardFolder" Name="MyAmneziaWG">
+					<Directory Id="DataFolder" Name="Data" />
+				</Directory>
+			</Directory>
+			<Directory Id="ProgramMenuFolder" />
+		</Directory>
+
+		<ComponentGroup Id="WireGuardComponents">
+			<Component Directory="WireGuardFolder" Id="WireGuardExecutable" Guid="f2b21d49-a131-4a68-9585-3285c44c0000">
+				<File Source="..\$(var.WIREGUARD_PLATFORM)\amneziawg.exe" KeyPath="yes">
+					<Shortcut Id="WireGuardStartMenuShortcut" Directory="ProgramMenuFolder" Name="MyAmneziaWG" Description="MyAmneziaWG: Fast, Modern, Secure VPN Tunnel" WorkingDirectory="WireGuardFolder" Advertise="yes" />
+				</File>
+				<ServiceControl Id="DummyService.8B2E3B7D_1D53_4E7E_9B0A_7F4C8A7A6D11" Name="DummyService.8B2E3B7D_1D53_4E7E_9B0A_7F4C8A7A6D11" />
+			</Component>
+			<Component Directory="WireGuardFolder" Id="WgExecutable" Guid="34d4bbc4-5980-40df-9d64-317d338ca98b">
+				<File Source="..\$(var.WIREGUARD_PLATFORM)\awg.exe" KeyPath="yes" />
+			</Component>
+			<Component Directory="WireGuardFolder" Id="WintunLibrary" Guid="a6b4cb13-8946-408f-aa03-2cfabae368a4">
+				<File Source="..\$(var.WIREGUARD_PLATFORM)\wintun.dll" KeyPath="yes" />
+			</Component>
+			<Component Directory="DataFolder" Id="DataFolderComponent" Guid="8c8e1f6f-2a9e-4b5f-8f13-2f2a7f1b6a41">
+				<CreateFolder />
+			</Component>
+		</ComponentGroup>
+
+		<Feature Id="WireGuardFeature" Title="MyAmneziaWG" Level="1">
+			<ComponentGroupRef Id="WireGuardComponents" />
+		</Feature>
+
+		<CustomAction Id="CheckWow64" BinaryKey="customactions.dll" DllEntry="CheckWow64" />
+		<InstallExecuteSequence>
+			<Custom Action="CheckWow64" After="FindRelatedProducts">NOT REMOVE</Custom>
+		</InstallExecuteSequence>
+
+		<CustomAction Id="EvaluateWireGuardServices" BinaryKey="customactions.dll" DllEntry="EvaluateWireGuardServices" />
+		<InstallExecuteSequence>
+			<Custom Action="EvaluateWireGuardServices" After="FindRelatedProducts" />
+		</InstallExecuteSequence>
+
+		<CustomAction Id="LaunchApplicationAndAbort" BinaryKey="customactions.dll" DllEntry="LaunchApplicationAndAbort" />
+		<InstallExecuteSequence>
+			<Custom Action="LaunchApplicationAndAbort" After="CostFinalize">ProductState=5 AND NOT REMOVE AND NOT DO_NOT_LAUNCH</Custom>
+		</InstallExecuteSequence>
+
+		<CustomAction Id="EvaluateWireGuardComponents" BinaryKey="customactions.dll" DllEntry="EvaluateWireGuardComponents" />
+		<InstallExecuteSequence>
+			<Custom Action="EvaluateWireGuardComponents" After="ProcessComponents" />
+		</InstallExecuteSequence>
+
+		<CustomAction Id="KillWireGuardProcesses" BinaryKey="customactions.dll" DllEntry="KillWireGuardProcesses" Execute="deferred" Impersonate="no" />
+		<InstallExecuteSequence>
+			<Custom Action="KillWireGuardProcesses" After="StopServices" />
+		</InstallExecuteSequence>
+
+		<CustomAction Id="RemoveConfigFolder" BinaryKey="customactions.dll" DllEntry="RemoveConfigFolder" Execute="deferred" Impersonate="no" />
+		<InstallExecuteSequence>
+			<Custom Action="RemoveConfigFolder" After="DeleteServices" />
+		</InstallExecuteSequence>
+
+		<CustomAction Id="RemoveAdapters" BinaryKey="customactions.dll" DllEntry="RemoveAdapters" Execute="deferred" Impersonate="no" />
+		<InstallExecuteSequence>
+			<Custom Action="RemoveAdapters" Before="RemoveFiles" />
+		</InstallExecuteSequence>
+
+		<CustomAction Id="LaunchApplication" HideTarget="yes" Impersonate="yes" Execute="deferred" FileKey="amneziawg.exe" ExeCommand="" Return="asyncNoWait" />
+		<InstallExecuteSequence>
+			<Custom Action="LaunchApplication" Before="InstallFinalize">(&amp;WireGuardFeature = 3) AND NOT DO_NOT_LAUNCH</Custom>
+		</InstallExecuteSequence>
+	</Product>
+</Wix>
