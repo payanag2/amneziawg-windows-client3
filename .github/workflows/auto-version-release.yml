@@ -1,0 +1,104 @@
+name: Auto Increment Version and Release
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: auto-version-release
+  cancel-in-progress: false
+
+jobs:
+  build-and-release:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Calculate next version and create tag
+        id: version
+        shell: pwsh
+        run: |
+          git fetch origin main --tags
+          git checkout main
+          git pull --ff-only origin main
+
+          $path = "version/version.go"
+          $content = Get-Content $path -Raw
+          $match = [regex]::Match($content, 'Number\s*=\s*"([0-9]+)\.([0-9]+)\.([0-9]+)"')
+          if (-not $match.Success) {
+            throw "Could not read a three-part version from $path"
+          }
+
+          $major = [int]$match.Groups[1].Value
+          $minor = [int]$match.Groups[2].Value
+          $patch = [int]$match.Groups[3].Value
+
+          do {
+            $patch++
+            $version = "$major.$minor.$patch"
+            $tag = "v$version"
+            $exists = git ls-remote --exit-code --tags origin "refs/tags/$tag" 2>$null
+          } while ($LASTEXITCODE -eq 0)
+
+          $newContent = [regex]::Replace(
+            $content,
+            'Number\s*=\s*"[0-9]+\.[0-9]+\.[0-9]+"',
+            "Number = `"$version`"",
+            1
+          )
+          Set-Content -Path $path -Value $newContent -NoNewline
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add $path
+          git commit -m "Bump version to $version"
+          git push origin HEAD:main
+
+          git tag -a $tag -m "MyAmneziaWG3 $tag"
+          git push origin "refs/tags/$tag"
+
+          "VERSION=$version" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+          "RELEASE_TAG=$tag" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+          Write-Host "Created version $version ($tag)"
+
+      - name: Build application
+        shell: cmd
+        run: build7.bat
+
+      - name: Build MSI installers
+        shell: cmd
+        run: installer\build7.bat
+
+      - name: Verify MSI files
+        shell: pwsh
+        run: |
+          $files = Get-ChildItem -Path installer/dist -Filter *.msi -File
+          if ($files.Count -eq 0) { throw "No MSI installers were produced." }
+          $files | ForEach-Object { Write-Host "$($_.Name) ($($_.Length) bytes)" }
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: MyAmneziaWG3-installers-${{ env.VERSION }}
+          path: installer/dist/*.msi
+          if-no-files-found: error
+          retention-days: 30
+
+      - name: Publish GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ env.RELEASE_TAG }}
+          name: MyAmneziaWG3 ${{ env.VERSION }}
+          files: installer/dist/*.msi
+          fail_on_unmatched_files: true
+          generate_release_notes: true
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
