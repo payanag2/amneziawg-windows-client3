@@ -1,0 +1,43 @@
+name: Import base client source
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  import:
+    if: github.event.head_commit.message == 'Start MyAmneziaWG3 source import'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout destination repository
+        uses: actions/checkout@v4
+        with:
+          path: destination
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Checkout tested independent client source
+        uses: actions/checkout@v4
+        with:
+          repository: payanag2/amneziawg-windows-client
+          ref: master
+          path: source
+
+      - name: Copy source tree
+        shell: bash
+        run: |
+          rsync -a --delete --exclude='.git' --exclude='.github/workflows/import-source.yml' source/ destination/
+          mkdir -p destination/.github/workflows
+          cp destination/.github/workflows/import-source.yml destination/.github/workflows/import-source.yml 2>/dev/null || true
+
+      - name: Commit imported source
+        shell: bash
+        run: |
+          cd destination
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "Import tested independent client source"
+          git push
