@@ -22,7 +22,8 @@ jobs:
           $extensions = @('.go','.mod','.sum','.bat','.wxs','.c','.md','.yml','.xml','.rc','.h','.json','.txt')
           $files = Get-ChildItem -Recurse -File | Where-Object {
             $extensions -contains $_.Extension.ToLowerInvariant() -and
-            $_.FullName -notmatch '[\\/]\.git[\\/]'
+            $_.FullName -notmatch '[\\/]\.git[\\/]' -and
+            $_.FullName -notmatch '[\\/]\.github[\\/]workflows[\\/]'
           }
           foreach ($file in $files) {
             $text = [System.IO.File]::ReadAllText($file.FullName)
