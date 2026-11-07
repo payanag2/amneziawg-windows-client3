@@ -24,7 +24,7 @@ jobs:
       - name: Prepare release tag
         shell: pwsh
         run: |
-          $tag = ""${{ github.event.inputs.tag }}"".Trim()
+          $tag = '${{ github.event.inputs.tag }}'.Trim()
 
           if ($tag -notmatch '^v?[0-9]+\.[0-9]+\.[0-9]+([.-][0-9A-Za-z.-]+)?$') {
             Write-Error "Invalid release tag '$tag'. Use a tag such as 3.3.4 or v3.3.4-beta.1."
